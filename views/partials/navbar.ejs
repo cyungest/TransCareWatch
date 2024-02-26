@@ -3,22 +3,19 @@
       <a class="navbar-brand" href="/">
         <img src="/images/logo.png" width="30" height="30" alt="">
       </a>
-      <%if (username){%>
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
           <a class="nav-link" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" id="login_link" href="/games/<%=username%>">My Games</a>
+          <a class="nav-link" id="login_link" href="/login">Login</a>
         </li>
         <li class="nav-item">
             <form action="/location" method="GET">
               <input type="search" class="form-control" placeholder="Zip Code"> 
               <button type="submit" class="btn btn-outline-danger" > Search</button> 
             </form>
-          <a class="nav-link" id="user_details_link" href="/users/<%=username%>">Account Details</a>
         </li>
-      <%}%>
       </ul>
     </div>
   </nav>
