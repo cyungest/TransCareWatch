@@ -37,15 +37,6 @@ app.get('/', async function(request, response) {
 // Because routes/middleware are applied in order,
 // this will act as a default error route in case of
 // a request fot an invalid route
-app.use("", function(request, response){
-  response.status(404);
-  response.setHeader('Content-Type', 'text/html')
-  response.render("error", {
-    "errorCode":"404",
-    feedback:"",
-    username:""
-  });
-});
 
 app.get('/login', async function(request, response) {
   console.log(request.method, request.url) //event logging
@@ -65,6 +56,16 @@ app.get('/users', async function(request, response) {
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/user_details",{
+    feedback:"",
+    username:""
+  });
+});
+
+app.use("", function(request, response){
+  response.status(404);
+  response.setHeader('Content-Type', 'text/html')
+  response.render("error", {
+    "errorCode":"404",
     feedback:"",
     username:""
   });

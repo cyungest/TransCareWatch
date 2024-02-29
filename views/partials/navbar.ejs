@@ -4,23 +4,17 @@
 
       </a>
       <h1>TransCareWatch</h1>
-      <ul class="navbar-nav align-items-center justify-content-center">
+      <ul class="navbar-nav text-align-center">
         <li class="nav-item active">
           <a class="nav-link" href="/">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" id="login_link" href="/login">Login</a>
         </li>
-        <li class="nav-item">
-            <form action="/location" method="GET">
-              <div class="d-flex mb-4">
-                <div class="form-outline me-3">
-                  <input type="search" class="form-control" placeholder="Zip Code"> 
-                </div>
-                <button type="submit" class="btn btn-outline-danger" >Search</button> 
-              </div>
-            </form>
-        </li>
+          <form class="d-flex" action="/location" method="GET">
+              <input type="search" class="form-control me-2" placeholder="Zip Code">
+              <button type="submit" class="btn btn-outline-success" >Search</button> 
+          </form>
       </ul>
     </div>
   </nav>
