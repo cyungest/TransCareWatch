@@ -47,6 +47,29 @@ app.use("", function(request, response){
   });
 });
 
+app.get('/login', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+
+  //-------------------Testing purposes: Verifying users actually exist in DB------------//
+  //-----------------------------------//
+
+  response.status(200);
+  response.setHeader('Content-Type', 'text/html')
+  response.render("info/login",{
+  });
+});
+
+app.get('/users', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+
+  response.status(200);
+  response.setHeader('Content-Type', 'text/html')
+  response.render("info/user_details",{
+    feedback:"",
+    username:""
+  });
+});
+
 //..............Start the server...............................//
 const port = process.env.PORT || 3000;
 app.set('port', port);
