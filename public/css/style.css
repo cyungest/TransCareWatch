@@ -51,3 +51,6 @@ html,
         ol {
         list-style-type:none       
         }
+        h1{
+        padding-block: 5px;
+        }

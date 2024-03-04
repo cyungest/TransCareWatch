@@ -61,6 +61,20 @@ app.get('/users', async function(request, response) {
   });
 });
 
+app.get('/micro', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+  let location = request.query.state
+
+  response.status(200);
+  response.setHeader('Content-Type', 'text/html')
+  response.render("info/micro",{
+    feedback:"",
+    location:location,
+    rank: "supportive"
+    
+  });
+});
+
 app.use("", function(request, response){
   response.status(404);
   response.setHeader('Content-Type', 'text/html')
