@@ -51,6 +51,6 @@ html,
         ol {
         list-style-type:none       
         }
-        h1{
-        padding-block: 5px;
+        h1.location{
+        padding-block: 10px;
         }
