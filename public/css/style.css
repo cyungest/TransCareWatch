@@ -54,3 +54,6 @@ html,
         h1.location{
         padding-block: 10px;
         }
+        .navbar-collapse {
+                background:transparent;
+        }
