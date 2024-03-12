@@ -86,7 +86,7 @@ class State:
         finally:
             db_connection.close()
 
-    def update_info(self, name = "", doc_data = {}, over_data = {}):
+    def update_info(self, name = "", updateList = {}):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
@@ -95,10 +95,8 @@ class State:
             if self.get_state(name = state_name)["result"] == "error":
                 return {"result":"error",
                     "message":"I don't even know how you got this error. The names of the states are in the embed of the svg!"}
-            if doc_data:
-                cursor.exectute(f"UPDATE {self.table_name} SET doctorList = {doc_data} WHERE name = {name}")
-            if over_data:
-                cursor.exectute(f"UPDATE {self.table_name} SET overview = {over_data} WHERE name = {name}")
+            for key in updateList:
+                cursor.exectute(f"UPDATE {self.table_name} SET {key} = {updateList[key]} WHERE name = {name}")
             db_connection.commit()
             return {"result": "success",
                     "message": self.get_state(name = state_name)["message"]
