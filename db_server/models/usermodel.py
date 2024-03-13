@@ -1,9 +1,19 @@
 import sqlite3
 import random
 import re
+import json
 
 def to_dict(user_tuple):
-        return dict(zip(("id", "username", "password", "email", "location", "savedDoctorIDs"), (user_tuple)))
+        dictionary = {}
+
+        dictionary["id"] = user_tuple[0]
+        dictionary["username"] = user_tuple[1]
+        dictionary["password"] = user_tuple[2]
+        dictionary["email"] = user_tuple[3]
+        dictionary["location"] = user_tuple[4]
+        dictionary["savedDoctorIDs"] = json.loads(user_tuple[5])
+        
+        return dictionary
 
 class User:
     def __init__(self, db_name):
