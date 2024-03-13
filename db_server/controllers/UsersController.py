@@ -1,0 +1,75 @@
+from flask import request
+from flask import jsonify
+
+import os
+from models.usermodel import User
+from models.doctormodel import Doctor
+from models.statemodel import State
+
+yahtzee_db_name=f"{os.getcwd()}/models/yahtzeeDB.db"
+
+users = User(yahtzee_db_name)
+doctors = Doctor(yahtzee_db_name)
+states = State(yahtzee_db_name)
+
+
+def get_users():
+    #Returns all user objects
+    # curl "http://127.0.0.1:5000"   
+
+    print(f"request.url={request.url}")
+    if request.method == "GET":
+        return users.get_users()["message"]
+    elif request.method == "POST":
+        content_type = request.headers.get('Content-Type')
+        if content_type == 'application/json':
+           # or request.is_json:
+            data = request.json
+            new_user = users.create_user(data)
+            return new_user["message"]
+        else:
+            return {}
+
+def get_userdoctors(user_name):
+    game_list = []
+    user_id = users.get_user(username = user_name)
+    if user_id["result"] == "error":
+        return []
+    doctorIDs = user_id["message"]["savedDoctorIDs"]
+    if doctorIDs == []:
+        return []
+
+    doctorList = []
+    for id in doctorIDs:
+        doctorList.append(doctors.getdoctor(id = id))
+    
+    
+    return doctorList
+
+def interact_user(user_name):
+    if request.method == "GET":
+        print(user_name)
+        user = users.get_user(username=user_name)
+        if user["result"] == "error":
+            return {}
+        return user["message"]
+    elif request.method == "PUT":
+        content_type = request.headers.get('Content-Type')
+        if content_type == 'application/json':
+           # or request.is_json:
+            data = request.json
+            user_id = {}
+            user_id["id"] = users.get_user(username=data["username"])["message"]["id"]
+            data = {**user_id, **data}
+            updated_user = users.update_user(data)
+            if updated_user["result"] == "error":
+                return {}
+            return updated_user["message"]
+        else:
+            return {}
+    elif request.method == "DELETE":
+        return_message = users.remove_user(username=user_name)
+        if return_message["result"] == "success":
+            return return_message["message"]
+        else:
+            return {}
