@@ -5,13 +5,13 @@ import datetime
 import json
 
 
-class State:
+class Doctors:
     def __init__(self, db_name):
         self.db_name =  db_name
         self.table_name = "doctors"
 
     
-    def initialize_states_table(self):
+    def initialize_doctors_table(self):
         db_connection = sqlite3.connect(self.db_name)
         cursor = db_connection.cursor()
         schema=f"""
@@ -27,3 +27,4 @@ class State:
         cursor.execute(f"DROP TABLE IF EXISTS {self.table_name};")
         results=cursor.execute(schema)
         db_connection.close()
+
