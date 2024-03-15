@@ -173,17 +173,19 @@ class Doctor:
         finally:
             db_connection.close()
     
-    def update_doctor(self, id = None, updateList = {}):
+    def update_doctor(self, name = None, updateList = {}):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
+
+            doctorID = self.get_doctor(name = name)["message"]["id"]
             
             if not self.exists(id)["message"]:
                 return {"result":"error",
                     "message":"User doesn't exist"}
             
             for key in updateList:
-                cursor.exectute(f"UPDATE {self.table_name} SET {key} = {updateList[key]} WHERE id = {id}")
+                cursor.exectute(f"UPDATE {self.table_name} SET {key} = {updateList[key]} WHERE id = {doctorID}")
             db_connection.commit()
             return {"result": "success",
                     "message": self.get_doctor(id = id)
