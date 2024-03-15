@@ -15,7 +15,7 @@ def to_dict(user_tuple):
         
         return dictionary
 
-class Doctors:
+class Doctor:
     def __init__(self, db_name):
         self.db_name =  db_name
         self.table_name = "doctors"
@@ -95,7 +95,7 @@ class Doctors:
             db_connection.close()
     
 
-    def get_doctor_by_location(self, stateID = ""):
+    def get_doctors_by_location(self, stateID = ""):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()

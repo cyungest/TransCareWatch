@@ -86,7 +86,7 @@ class State:
         finally:
             db_connection.close()
 
-    def update_info(self, name = "", updateList = {}):
+    def update_state(self, name = "", updateList = {}):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()

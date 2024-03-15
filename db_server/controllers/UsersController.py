@@ -31,11 +31,10 @@ def get_users():
             return {}
 
 def get_userdoctors(user_name):
-    game_list = []
-    user_id = users.get_user(username = user_name)
-    if user_id["result"] == "error":
+    user = users.get_user(username = user_name)
+    if user["result"] == "error":
         return []
-    doctorIDs = user_id["message"]["savedDoctorIDs"]
+    doctorIDs = user["message"]["savedDoctorIDs"]
     if doctorIDs == []:
         return []
 
@@ -58,10 +57,8 @@ def interact_user(user_name):
         if content_type == 'application/json':
            # or request.is_json:
             data = request.json
-            user_id = {}
-            user_id["id"] = users.get_user(username=data["username"])["message"]["id"]
-            data = {**user_id, **data}
-            updated_user = users.update_user(data)
+            user_id = users.get_user(username=data["username"])["message"]["id"]
+            updated_user = users.update_user(id = user_id, updateList = data)
             if updated_user["result"] == "error":
                 return {}
             return updated_user["message"]
