@@ -21,3 +21,5 @@ app.add_url_rule('/states/<name>', view_func=StatesController.interact_state, me
 
 app.add_url_rule('/doctors', view_func=DoctorsController.get_doctors, methods = ['POST', 'GET'])
 app.add_url_rule('/doctors/<name>', view_func=DoctorsController.interact_doctor, methods = ['GET','PUT', 'DELETE'])
+
+app.run(debug=True, port=5000)

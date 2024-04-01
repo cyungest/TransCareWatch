@@ -198,7 +198,7 @@ class Doctor:
         finally:
             db_connection.close()
 
-    def remove_user(self, name = ''):
+    def remove_doctor(self, name = ''):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()

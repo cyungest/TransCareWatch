@@ -38,7 +38,7 @@ app.get('/', async function(request, response) {
 // this will act as a default error route in case of
 // a request fot an invalid route
 
-app.get('/login', async function(request, response) {
+app.get('/loginpage', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
   //-------------------Testing purposes: Verifying users actually exist in DB------------//
@@ -47,6 +47,7 @@ app.get('/login', async function(request, response) {
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/login",{
+    feedback:""
   });
 });
 
@@ -74,6 +75,158 @@ app.get('/macro', async function(request, response) {
     
   });
 });
+
+app.get('/login', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+
+  //Get user login info from query string portion of url
+  let username = request.query.username;
+  let password = request.query.password;
+  if(username && password){
+    //get alleged user 
+    let url = 'http://127.0.0.1:5000/users/'+username;
+    let res = await fetch(url);
+    let details = JSON.parse(await res.text());
+    console.log("Requested user per username:")
+    console.log(details)
+
+    //Verify user password matches
+    if (details["password"] && details["password"]==password){
+      let url = 'http://127.0.0.1:5000/scores/'+username;
+      let res = await fetch(url);
+      let details = JSON.parse(await res.text());
+      url = "http://127.0.0.1:5000/scores"
+      res = await fetch(url);
+      let highscore_list = JSON.parse(await res.text());
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/userhome", {
+        feedback:"",
+      username: username,
+      gamelist: details,
+      highscore_list: highscore_list
+    });
+    }else if (details["password"] && details["password"]!=password){
+      response.status(401); //401 Unauthorized
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/login", {
+        feedback:"Incorrect password. Please try again"
+      });
+    }else{
+      response.status(404); //404 Unauthorized
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/login", {
+        feedback:"Requested user does not exist"
+      });
+    }
+  }else{
+    response.status(401); //401 Unauthorized
+    response.setHeader('Content-Type', 'text/html')
+    response.render("info/login", {
+      feedback:"Please provide both a username and password"
+    });
+  }
+  
+});//GET /login
+
+app.post('/users', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+
+  //Get user information from body of POST request
+  let username = request.body.username;
+  let email = request.body.email;
+  let password = request.body.password;
+  // HEADs UP: You really need to validate this information!
+  console.log("Info recieved:", username, email, password)
+
+  if (username.length > 0 & email.length > 0 & password.length > 0){
+    let url = 'http://127.0.0.1:5000/users/'+username;
+    let res = await fetch(url);
+    let details = JSON.parse(await res.text());
+    console.log("Requested user per username:")
+    console.log(details)
+
+    url = "http://127.0.0.1:5000/users"
+    res = await fetch(url);
+    user_list = JSON.parse(await res.text());
+    if(user_list.some(user => user.username == username)) {
+      response.status(401); //401 Unauthorized
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/user_details", {
+      feedback:"Duplicate Username. Please try a different name.",
+      username:""
+
+    });
+    } else if (user_list.some(user => user.email == email)){
+      response.status(401); //401 Unauthorized
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/user_details", {
+      feedback:"Duplicate Email. Please try a different email.",
+      username:""
+
+    })
+    } else if (JSON.stringify(details) === '{}'){
+      url = 'http://127.0.0.1:5000/users'
+      const headers = {
+          "Content-Type": "application/json",
+      }
+      res = await fetch(url, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify(request.body),
+      });
+    
+      let posted_user = await res.text();
+      details = JSON.parse(posted_user);
+      console.log("Returned user:", details)
+      url = 'http://127.0.0.1:5000/users/doctors/'+username;
+      res = await fetch(url);
+      details = JSON.parse(await res.text());
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/userhome", {
+        feedback:"",
+        username: username,
+        doctorlist: details
+    });
+    } else {
+      url = 'http://127.0.0.1:5000/users/' +username;
+      const headers = {
+          "Content-Type": "application/json",
+      }
+      res = await fetch(url, {
+          method: "PUT",
+          headers: headers,
+          body: JSON.stringify(request.body),
+      });
+      
+      let posted_user = await res.text();
+      details = JSON.parse(posted_user);
+      console.log("Returned user:", details)
+      url = 'http://127.0.0.1:5000/users/doctors/'+username;
+      res = await fetch(url);
+      details = JSON.parse(await res.text());
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/userhome", {
+        feedback:"",
+        username: username,
+        doctorlist: details
+    });
+    } 
+  } else {
+    response.status(401); //401 Unauthorized
+    response.setHeader('Content-Type', 'text/html')
+    response.render("info/user_details", {
+    feedback:"Missing Info. Please make sure each field is filled.",
+    username:""
+    });
+  }
+
+  
+
+ 
+}); //POST /user
 
 app.use("", function(request, response){
   response.status(404);
