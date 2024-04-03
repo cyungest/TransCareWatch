@@ -11,7 +11,7 @@ def to_dict(user_tuple):
         dictionary["password"] = user_tuple[2]
         dictionary["email"] = user_tuple[3]
         dictionary["location"] = user_tuple[4]
-        dictionary["savedDoctorIDs"] = json.loads(user_tuple[5])
+        dictionary["savedDoctorIDs"] = user_tuple[5]
         
         return dictionary
 
@@ -120,7 +120,7 @@ class User:
             user_data = (user_details["username"], user_details["password"], user_details["email"], user_details["location"])
             #are you sure you have all data in the correct format?
 
-            cursor.execute(f"INSERT INTO {self.table_name}(username,password,email,location,savedDoctorIDs) VALUES (?, ?, ?, ?, "");", user_data)
+            cursor.execute(f"INSERT INTO {self.table_name}(username,password,email,location,savedDoctorIDs) VALUES (?, ?, ?, ?, []);", user_data)
             db_connection.commit()
             return {"result": "success",
                     "message": self.get_user(username = user_details["username"])["message"]
