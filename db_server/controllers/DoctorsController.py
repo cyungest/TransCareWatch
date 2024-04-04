@@ -6,11 +6,11 @@ from models.usermodel import User
 from models.doctormodel import Doctor
 from models.statemodel import State
 
-yahtzee_db_name=f"{os.getcwd()}/models/yahtzeeDB.db"
+tcw_db_name=f"{os.getcwd()}/models/tcwDB.db"
 
-users = User(yahtzee_db_name)
-doctors = Doctor(yahtzee_db_name)
-states = State(yahtzee_db_name)
+users = User(tcw_db_name)
+doctors = Doctor(tcw_db_name)
+states = State(tcw_db_name)
 
 
 def get_doctors():

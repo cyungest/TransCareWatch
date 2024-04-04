@@ -19,7 +19,6 @@ def get_users():
 
     print(f"request.url={request.url}")
     if request.method == "GET":
-        print(users.get_users()["message"])
         return users.get_users()["message"]
     elif request.method == "POST":
         content_type = request.headers.get('Content-Type')

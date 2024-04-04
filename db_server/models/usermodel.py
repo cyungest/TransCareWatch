@@ -120,7 +120,8 @@ class User:
             user_data = (user_details["username"], user_details["password"], user_details["email"], user_details["location"])
             #are you sure you have all data in the correct format?
 
-            cursor.execute(f"INSERT INTO {self.table_name}(username,password,email,location,savedDoctorIDs) VALUES (?, ?, ?, ?, []);", user_data)
+
+            cursor.execute(f"INSERT INTO {self.table_name}(username,password,email,location,savedDoctorIDs) VALUES (?, ?, ?, ?, '');", user_data)
             db_connection.commit()
             return {"result": "success",
                     "message": self.get_user(username = user_details["username"])["message"]
