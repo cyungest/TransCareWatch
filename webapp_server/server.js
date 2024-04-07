@@ -237,6 +237,190 @@ app.post('/users', async function(request, response) {
  
 }); //POST /user
 
+
+app.post('/states', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+
+  //Get user information from body of POST request
+  let name = request.body.statename;
+  let overview = {
+    minorsHRT: request.body.minorsHRT,
+    minorsDYS: request.body.minorsDYS,
+    minorsST: request.body.minorsST,
+    adultsHRT: request.body.adultsHRT,
+    adultsDYS: request.body.adultsDYS,
+    adultsSUR: request.body.adultsSUR
+  } 
+
+  // HEADs UP: You really need to validate this information!
+  console.log("Info recieved:", name, overview)
+  console.log(name.length, Object.keys(overview).length)
+
+  if (name.length > 0 & Object.keys(overview).length > 0){
+    let url = 'http://127.0.0.1:5000/states/'+name;
+    let res = await fetch(url);
+    let details = JSON.parse(await res.text());
+    console.log("Requested State per name:")
+    console.log(details)
+
+    if (JSON.stringify(details) === '{}'){
+      url = 'http://127.0.0.1:5000/states'
+      const headers = {
+          "Content-Type": "application/json",
+      }
+      res = await fetch(url, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            name:name,
+            overview:overview
+            }),
+      });
+    
+      url = 'http://127.0.0.1:5000/states/'+name;
+      res = await fetch(url);
+      details = JSON.parse(await res.text());
+      console.log("Returned State:", details)
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/admin", {
+        feedback:"State Added",
+        username: ""
+    });
+    } else {
+      url = 'http://127.0.0.1:5000/doctors/' +name;
+      const headers = {
+          "Content-Type": "application/json",
+      }
+      res = await fetch(url, {
+          method: "PUT",
+          headers: headers,
+          body: JSON.stringify(request.body),
+      });
+      
+      let posted_user = await res.text();
+      details = JSON.parse(posted_user);
+      console.log("Returned user:", details)
+      url = 'http://127.0.0.1:5000/users/doctors/'+username;
+      res = await fetch(url);
+      details = JSON.parse(await res.text());
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/specificLoc", {
+        feedback:"",
+        username: username,
+        doctorlist: details
+    });
+    } 
+  } else {
+    response.status(401); //401 Unauthorized
+    response.setHeader('Content-Type', 'text/html')
+    response.render("info/admin", {
+    feedback:"Missing Info. Please make sure each field is filled.",
+    username:""
+    });
+  }
+}); //THE PUT REQUEST DOES NOT WORK RIGHT NOW. WORK ON LATER. 
+
+app.post('/doctors', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+
+  //Get user information from body of POST request
+  let name = request.body.name;
+  let doctorLocation = request.body.doctorLocation;
+  let summary = request.body.summary;
+  let contactInfo = {
+    number: request.body.number,
+    email: request.body.email
+  } 
+
+  // HEADs UP: You really need to validate this information!
+  console.log("Info recieved:", name, doctorLocation, summary, contactInfo)
+
+  if (name.length > 0 & doctorLocation.length > 0 & contactInfo.length > 0){
+    let url = 'http://127.0.0.1:5000/doctors/'+name;
+    let res = await fetch(url);
+    let details = JSON.parse(await res.text());
+    console.log("Requested Doctor per username:")
+    console.log(details)
+
+    url = "http://127.0.0.1:5000/doctors"
+    res = await fetch(url);
+    user_list = JSON.parse(await res.text());
+    if(user_list.some(user => user.username == username)) {
+      response.status(401); //401 Unauthorized
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/admin", {
+      feedback:"Duplicate Doctor. Please try a different name.",
+      username:""
+
+    });
+    } else if (JSON.stringify(details) === '{}'){
+      url = 'http://127.0.0.1:5000/doctors'
+      const headers = {
+          "Content-Type": "application/json",
+      }
+      res = await fetch(url, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            name:request.body.name,
+            doctorLocation: request.body.doctorLocation,
+            summary: request.body.summary,
+            contactInfo : {
+              number: request.body.number,
+              email: request.body.email
+            }
+          }),
+      });
+    
+      let posted_user = await res.text();
+      details = JSON.parse(posted_user);
+      console.log("Returned user:", details)
+      url = 'http://127.0.0.1:5000/users/doctors/'+username;
+      res = await fetch(url);
+      details = JSON.parse(await res.text());
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/admin", {
+        feedback:"Doctor Added",
+        username: ""
+    });
+    } else {
+      url = 'http://127.0.0.1:5000/doctors/' +name;
+      const headers = {
+          "Content-Type": "application/json",
+      }
+      res = await fetch(url, {
+          method: "PUT",
+          headers: headers,
+          body: JSON.stringify(request.body),
+      });
+      
+      let posted_user = await res.text();
+      details = JSON.parse(posted_user);
+      console.log("Returned user:", details)
+      url = 'http://127.0.0.1:5000/users/doctors/'+username;
+      res = await fetch(url);
+      details = JSON.parse(await res.text());
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/specificLoc", {
+        feedback:"",
+        username: username,
+        doctorlist: details
+    });
+    } 
+  } else {
+    response.status(401); //401 Unauthorized
+    response.setHeader('Content-Type', 'text/html')
+    response.render("info/user_details", {
+    feedback:"Missing Info. Please make sure each field is filled.",
+    username:""
+    });
+  }
+}); //THE PUT REQUEST DOES NOT WORK RIGHT NOW. WORK ON LATER. 
+
 app.use("", function(request, response){
   response.status(404);
   response.setHeader('Content-Type', 'text/html')

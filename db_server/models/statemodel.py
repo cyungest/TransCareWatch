@@ -94,7 +94,8 @@ class State:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            data = (data["name"], data["overview"], data["doctorList"], data["visits"])
+            data = (data["name"], json.dumps(data["overview"]), "", 0)
+            print(data)
             #are you sure you have all data in the correct format?
 
             cursor.execute(f"INSERT INTO {self.table_name}(name,overview,doctorList,visits) VALUES (?, ?,?,?);", data)
