@@ -39,7 +39,8 @@ app.get('/admin', async function(request, response) {
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/admin",{
-    feedback:""
+    feedback:"",
+    username:""
   });
 
 })
