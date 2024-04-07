@@ -7,6 +7,7 @@ from flask_cors import CORS
 import controllers.UsersController as UsersController
 import controllers.StatesController as StatesController
 import controllers.DoctorsController as DoctorsController
+import controllers.StatsController as StatsController
 
 app = Flask(__name__, static_url_path='', static_folder='static')
 CORS(app)
@@ -21,5 +22,8 @@ app.add_url_rule('/states/<name>', view_func=StatesController.interact_state, me
 
 app.add_url_rule('/doctors', view_func=DoctorsController.get_doctors, methods = ['POST', 'GET'])
 app.add_url_rule('/doctors/<name>', view_func=DoctorsController.interact_doctor, methods = ['GET','PUT', 'DELETE'])
+
+app.add_url_rule('/stats', view_func=StatsController.get_stats, methods = ['POST', 'GET'])
+app.add_url_rule('/stats/count', view_func=StatsController.get_count)
 
 app.run(debug=True, port=5000)

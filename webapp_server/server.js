@@ -33,7 +33,16 @@ app.get('/', async function(request, response) {
   });
 });
 
+app.get('/admin', async function(request, response) {
+  console.log(request.method, request.url)
 
+  response.status(200);
+  response.setHeader('Content-Type', 'text/html')
+  response.render("info/admin",{
+    feedback:""
+  });
+
+})
 // Because routes/middleware are applied in order,
 // this will act as a default error route in case of
 // a request fot an invalid route
@@ -92,19 +101,18 @@ app.get('/login', async function(request, response) {
 
     //Verify user password matches
     if (details["password"] && details["password"]==password){
-      let url = 'http://127.0.0.1:5000/scores/'+username;
-      let res = await fetch(url);
-      let details = JSON.parse(await res.text());
-      url = "http://127.0.0.1:5000/scores"
+      let posted_user = await res.text();
+      details = JSON.parse(posted_user);
+      console.log("Returned user:", details)
+      url = 'http://127.0.0.1:5000/users/doctors/'+username;
       res = await fetch(url);
-      let highscore_list = JSON.parse(await res.text());
+      details = JSON.parse(await res.text());
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
-      response.render("info/userhome", {
+      response.render("info/specificLoc", {
         feedback:"",
-      username: username,
-      gamelist: details,
-      highscore_list: highscore_list
+        username: username,
+        doctorlist: details
     });
     }else if (details["password"] && details["password"]!=password){
       response.status(401); //401 Unauthorized
@@ -184,7 +192,7 @@ app.post('/users', async function(request, response) {
       details = JSON.parse(await res.text());
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
-      response.render("info/userhome", {
+      response.render("info/specificLoc", {
         feedback:"",
         username: username,
         doctorlist: details
@@ -208,7 +216,7 @@ app.post('/users', async function(request, response) {
       details = JSON.parse(await res.text());
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
-      response.render("info/userhome", {
+      response.render("info/specificLoc", {
         feedback:"",
         username: username,
         doctorlist: details

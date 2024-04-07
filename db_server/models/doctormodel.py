@@ -129,7 +129,7 @@ class Doctor:
             cursor.execute(f"INSERT INTO {self.table_name}(name,stateID,overview,contactInfo) VALUES (?, ?, ?, ?);", doc_data)
             db_connection.commit()
             return {"result": "success",
-                    "message": self.get_user(name = doc_details["name"])["message"]
+                    "message": self.get_doctor(name = doc_details["name"])["message"]
                     }
         
         except sqlite3.Error as error:

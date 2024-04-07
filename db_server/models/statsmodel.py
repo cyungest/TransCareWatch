@@ -4,33 +4,30 @@ import re
 import datetime
 import json
 
-def to_dict(state_tuple):
-        dictionary = {}
+def to_dict(input):
+    dict = {}
 
-        dictionary["id"] = state_tuple[0]
-        dictionary["name"] = state_tuple[1]
-        dictionary["overview"] = json.loads(state_tuple[2])
-        dictionary["doctorList"] = state_tuple[3]
-        dictionary["visits"] = state_tuple[4]
-        
-        return dictionary
+    dict["id"] = input[0]
+    dict["route"] = input[1]
+    dict["userID"] = input[2]
 
-class State:
+    return dict
+
+
+class Stats:
     def __init__(self, db_name):
         self.db_name =  db_name
         self.table_name = "states"
 
     
-    def initialize_states_table(self):
+    def initialize_stats_table(self):
         db_connection = sqlite3.connect(self.db_name)
         cursor = db_connection.cursor()
         schema=f"""
                 CREATE TABLE {self.table_name} (
                     id INTEGER PRIMARY KEY,
-                    name TEXT UNIQUE NOT NULL,
-                    overview TEXT,
-                    doctorList TEXT,
-                    visits INT
+                    route TEXT UNIQUE NOT NULL,
+                    userID TEXT,
                 );
                 """
         
@@ -38,7 +35,7 @@ class State:
         results=cursor.execute(schema)
         db_connection.close()
 
-    def get_states(self):
+    def get_stats(self):
         try:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
@@ -47,8 +44,8 @@ class State:
             results=cursor.execute(query)
             list = results.fetchall()
             returnlist = []
-            for states in list:
-                returnlist.append(to_dict(states))
+            for requests in list:
+                returnlist.append(to_dict(requests))
 
 
             return {"result": "success",
@@ -62,16 +59,14 @@ class State:
         finally:
             db_connection.close()
 
-    def get_state(self, name = ""):
+    def get_stat(self, id = ""):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            print("Here is the state" + name)
-            if name:
-                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.name = {name};"
+            if id:
+                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.name = {id};"
                 results = cursor.execute(query)
-                cursor.execute(f"UPDATE {self.table_name} SET visits = visits + 1 WHERE name = {name}")
                 results = results.fetchone()
                 if results:
                     return {"result": "success",
@@ -89,15 +84,15 @@ class State:
         finally:
             db_connection.close()
     
-    def create_state(self, data):
+    def create_entry(self, details):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            data = (data["name"], data["overview"], data["doctorList"], data["visits"])
+            data = (details["route"], details["userID"])
             #are you sure you have all data in the correct format?
 
-            cursor.execute(f"INSERT INTO {self.table_name}(name,overview,doctorList,visits) VALUES (?, ?,?,?);", data)
+            cursor.execute(f"INSERT INTO {self.table_name}(name,userID) VALUES (?, ?);", data)
             db_connection.commit()
             return {"result": "success",
                     "message": "created"
@@ -109,30 +104,24 @@ class State:
         
         finally:
             db_connection.close()
-
-
-    def update_state(self, name = "", updateList = {}):
+    
+    def get_count(self):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            state_name = name 
 
-            if self.get_state(name = state_name)["result"] == "error":
-                return {"result":"error",
-                    "message":"I don't even know how you got this error. The names of the states are in the embed of the svg!"}
-            for key in updateList:
-                cursor.exectute(f"UPDATE {self.table_name} SET {key} = {updateList[key]} WHERE name = {name}")
-            db_connection.commit()
-            return {"result": "success",
-                    "message": self.get_state(name = state_name)["message"]
-                    }
-
+            if id:
+                query = f"SELECT COUNT(*) from {self.table_name};"
+                results = cursor.execute(query)
+                return results
+                
+            return {"result": "error",
+            "message": "ONCE AGAIN I HAVE NO IDEA HOW U GOT THIS ERROR."
+            }
+        
         except sqlite3.Error as error:
-            print(error)
             return {"result":"error",
                     "message":error}
         
         finally:
             db_connection.close()
-
-    

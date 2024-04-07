@@ -1,0 +1,136 @@
+<%- include('../partials/header', {title:"TransCareWatch: Admin Page"}) -%>
+
+</head>
+<body class="text-center">
+    <div class="modal-body row">
+      <div class="col-md-6">
+        <h2>Input Data for States</h2>
+        <main class="form-signin">
+            <form action = "/states" method = "POST">
+                <div class="form-floating">
+                  <input type="username" class="form-control" id="name_input" name="name" value="" placeholder="name">
+                  <label for="floatingInput">Name</label>
+                </div>
+
+                <h4>HRT for Minors</h4>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" id="minorsHRT0" name="minorsHRT" value="0" placeholder="minorsHRT0">
+                  <label for="minorsHRT0">Banned</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="minorsHRT1" name="minorsHRT" value="1" placeholder="minorsHRT1">
+                    <label for="minorsHRT1">Restricted</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="minorsHRT2" name="minorsHRT" value="2" placeholder="minorsHRT2">
+                    <label for="minorsHRT2">Allowed</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="minorsHRT3" name="minorsHRT" value="3" placeholder="minorsHRT3">
+                    <label for="minorsHRT3">Protected</label>
+                </div>
+
+                <h4>Diagnoses of Gender Dysphoria for Minors</h4>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" id="minorsDYS0" name="minorsDYS" value="0" placeholder="minorsDYS0">
+                  <label for="minorsDYS0">Banned</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="minorsDYS1" name="minorsDYS" value="1" placeholder="minorsDYS1">
+                    <label for="minorsDYS1">Restricted</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="minorsDYS2" name="minorsDYS" value="2" placeholder="minorsDYS2">
+                    <label for="minorsDYS2">Allowed</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="minorsDYS3" name="minorsDYS" value="3" placeholder="minorsDYS3">
+                    <label for="minorsDYS3">Protected</label>
+                </div>
+
+                <h4>Socially Transitioning in Schools</h4>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" id="minorsST0" name="minorsST" value="0" placeholder="minorsST0">
+                  <label for="minorsST0">Banned</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="minorsST1" name="minorsST" value="1" placeholder="minorsST1">
+                    <label for="minorsST1">Restricted</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="minorsST2" name="minorsST" value="2" placeholder="minorsST2">
+                    <label for="minorsST2">Allowed</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="minorsST3" name="minorsST" value="3" placeholder="minorsST3">
+                    <label for="minorsST3">Protected</label>
+                </div>
+
+                <h4>HRT for Adults</h4>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" id="adultsHRT0" name="adultsHRT" value="0" placeholder="adultsHRT0">
+                  <label for="adultsHRT0">Banned</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="adultsHRT1" name="adultsHRT" value="1" placeholder="adultsHRT1">
+                    <label for="adultsHRT1">Restricted</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="adultsHRT2" name="adultsHRT" value="2" placeholder="adultsHRT2">
+                    <label for="adultsHRT2">Allowed</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="adultsHRT3" name="adultsHRT" value="3" placeholder="adultsHRT3">
+                    <label for="adultsHRT3">Protected</label>
+                </div>
+
+                <h4>Diagnoses of Gender Dysphoria for Adults</h4>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" id="adultsDYS0" name="adultsDYS" value="0" placeholder="adultsDYS0">
+                  <label for="adultsDYS0">Banned</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="adultsDYS1" name="adultsDYS" value="1" placeholder="adultsDYS1">
+                    <label for="adultsDYS1">Restricted</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="adultsDYS2" name="adultsDYS" value="2" placeholder="adultsDYS2">
+                    <label for="adultsDYS2">Allowed</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="adultsDYS3" name="adultsDYS" value="3" placeholder="adultsDYS3">
+                    <label for="adultsDYS3">Protected</label>
+                </div>
+
+                <h4>Gender Affirming Surgeries for Adults</h4>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" id="adultsSUR0" name="adultsSUR" value="0" placeholder="adultsSUR0">
+                  <label for="adultsSUR0">Banned</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="adultsSUR1" name="adultsSUR" value="1" placeholder="adultsSUR1">
+                    <label for="adultsSUR1">Restricted</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="adultsSUR2" name="adultsSUR" value="2" placeholder="adultsSUR2">
+                    <label for="adultsSUR2">Allowed</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="adultsSUR3" name="adultsSUR" value="3" placeholder="adultsSUR3">
+                    <label for="adultsSUR3">Protected</label>
+                </div>
+
+                <div class="button-box col-lg-14"> 
+                  <button class="btn btn-info" id="create_button" type="submit">Create/Update State</button>
+                  <section id="feedback"><%=feedback%></section>
+                </div>
+
+            </form>
+          </main>
+      </div>
+      <div class="col-md-6">  
+
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  </body>
