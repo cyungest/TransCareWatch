@@ -5,12 +5,14 @@ import os
 from models.usermodel import User
 from models.doctormodel import Doctor
 from models.statemodel import State
+from models.statsmodel import Stats
 
 tcw_db_name=f"{os.getcwd()}/models/tcwDB.db"
 
 users = User(tcw_db_name)
 doctors = Doctor(tcw_db_name)
 states = State(tcw_db_name)
+stats = Stats(tcw_db_name)
 
 
 def get_doctors():
@@ -26,6 +28,7 @@ def get_doctors():
            # or request.is_json:
             data = request.json
             new_doctor = doctors.create_doctor(doc_details = data)
+            print(new_doctor["message"])
             return new_doctor["message"]
         else:
             return {}

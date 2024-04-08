@@ -69,10 +69,11 @@ class State:
 
             print("Here is the state" + name)
             if name:
-                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.name = {name};"
+                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.name = '{name}';"
                 results = cursor.execute(query)
-                cursor.execute(f"UPDATE {self.table_name} SET visits = visits + 1 WHERE name = {name}")
                 results = results.fetchone()
+                cursor.execute(f"UPDATE {self.table_name} SET visits = visits + 1 WHERE name = '{name}';")
+                print(results)
                 if results:
                     return {"result": "success",
                             "message": to_dict(results)
@@ -94,14 +95,14 @@ class State:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            data = (data["name"], json.dumps(data["overview"]), "", 0)
+            tupleData = (data["name"], json.dumps(data["overview"]), "", 0)
             print(data)
             #are you sure you have all data in the correct format?
 
-            cursor.execute(f"INSERT INTO {self.table_name}(name,overview,doctorList,visits) VALUES (?, ?,?,?);", data)
+            cursor.execute(f"INSERT INTO {self.table_name}(name,overview,doctorList,visits) VALUES (?, ?,?,?);", tupleData)
             db_connection.commit()
             return {"result": "success",
-                    "message": "created"
+                    "message": self.get_state(name = data["name"])["message"]
                     }
         
         except sqlite3.Error as error:

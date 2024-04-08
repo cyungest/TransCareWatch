@@ -41,6 +41,7 @@ def interact_state(name):
     if request.method == "GET":
         print(name)
         state = states.get_state(name=name)
+        print(state["message"])
         if state["result"] == "error":
             return {}
         return state["message"]

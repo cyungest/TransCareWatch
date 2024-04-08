@@ -76,12 +76,24 @@ app.get('/macro', async function(request, response) {
   console.log(request.method, request.url) //event logging
   let location = request.query.state
 
+  let url = 'http://127.0.0.1:5000/states/'+location;
+  let res = await fetch(url);
+  let details = JSON.parse(await res.text());
+  console.log("Requested state per click:")
+  console.log(details.overview)
+  let overview = details.overview
+  let map = ["Banned", "Restricted", "Allowed", "Protected"]
+  for(key in overview){
+    overview[key] = map[overview[key]]
+  }
+
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/macro",{
     feedback:"",
     location:location,
-    rank: "supportive"
+    rank: "supportive",
+    overview: overview
     
   });
 });
@@ -329,33 +341,20 @@ app.post('/doctors', async function(request, response) {
   let name = request.body.name;
   let doctorLocation = request.body.doctorLocation;
   let summary = request.body.summary;
-  let contactInfo = {
-    number: request.body.number,
-    email: request.body.email
-  } 
+  let number = request.body.number
+  let email = request.body.email
 
   // HEADs UP: You really need to validate this information!
-  console.log("Info recieved:", name, doctorLocation, summary, contactInfo)
+  console.log("Info recieved:", name, doctorLocation, summary, number, email)
 
-  if (name.length > 0 & doctorLocation.length > 0 & contactInfo.length > 0){
+  if (name.length > 0 & doctorLocation.length > 0 & number.length > 0 & email.length > 0){
     let url = 'http://127.0.0.1:5000/doctors/'+name;
     let res = await fetch(url);
     let details = JSON.parse(await res.text());
     console.log("Requested Doctor per username:")
     console.log(details)
 
-    url = "http://127.0.0.1:5000/doctors"
-    res = await fetch(url);
-    user_list = JSON.parse(await res.text());
-    if(user_list.some(user => user.username == username)) {
-      response.status(401); //401 Unauthorized
-      response.setHeader('Content-Type', 'text/html')
-      response.render("info/admin", {
-      feedback:"Duplicate Doctor. Please try a different name.",
-      username:""
-
-    });
-    } else if (JSON.stringify(details) === '{}'){
+    if (JSON.stringify(details) === '{}'){
       url = 'http://127.0.0.1:5000/doctors'
       const headers = {
           "Content-Type": "application/json",
@@ -364,22 +363,20 @@ app.post('/doctors', async function(request, response) {
           method: "POST",
           headers: headers,
           body: JSON.stringify({
-            name:request.body.name,
-            doctorLocation: request.body.doctorLocation,
-            summary: request.body.summary,
+            name:name,
+            doctorLocation: doctorLocation,
+            summary: summary,
             contactInfo : {
-              number: request.body.number,
-              email: request.body.email
+              number: number,
+              email: email
             }
           }),
       });
     
-      let posted_user = await res.text();
-      details = JSON.parse(posted_user);
-      console.log("Returned user:", details)
-      url = 'http://127.0.0.1:5000/users/doctors/'+username;
+      url = 'http://127.0.0.1:5000/doctors/'+name;
       res = await fetch(url);
       details = JSON.parse(await res.text());
+      console.log("Returned user:", details)
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
       response.render("info/admin", {
@@ -405,7 +402,7 @@ app.post('/doctors', async function(request, response) {
       details = JSON.parse(await res.text());
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
-      response.render("info/specificLoc", {
+      response.render("info/admin", {
         feedback:"",
         username: username,
         doctorlist: details
@@ -414,7 +411,7 @@ app.post('/doctors', async function(request, response) {
   } else {
     response.status(401); //401 Unauthorized
     response.setHeader('Content-Type', 'text/html')
-    response.render("info/user_details", {
+    response.render("info/admin", {
     feedback:"Missing Info. Please make sure each field is filled.",
     username:""
     });

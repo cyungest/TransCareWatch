@@ -9,8 +9,8 @@ def to_dict(user_tuple):
 
         dictionary["id"] = user_tuple[0]
         dictionary["name"] = user_tuple[1]
-        dictionary["stateID"] = user_tuple[2]
-        dictionary["overview"] = user_tuple[3]
+        dictionary["location"] = user_tuple[2]
+        dictionary["summary"] = user_tuple[3]
         dictionary["contactInfo"] = json.loads(user_tuple[4])
         
         return dictionary
@@ -28,8 +28,8 @@ class Doctor:
                 CREATE TABLE {self.table_name} (
                     id INTEGER PRIMARY KEY,
                     name TEXT UNIQUE NOT NULL,
-                    stateID INT,
-                    overview TEXT,
+                    location INT,
+                    summary TEXT,
                     contactInfo TEXT
                 );
                 """
@@ -95,12 +95,12 @@ class Doctor:
             db_connection.close()
     
 
-    def get_doctors_by_location(self, stateID = ""):
+    def get_doctors_by_location(self, location = ""):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            query = f"SELECT * from {self.table_name} WHERE {self.table_name}.stateID = {stateID};"
+            query = f"SELECT * from {self.table_name} WHERE {self.table_name}.location = {location};"
             results = cursor.execute(query)
             results = results.fetchall()
             returnlist = []
@@ -123,10 +123,10 @@ class Doctor:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            doc_data = (doc_details["name"], doc_details["stateID"], doc_details["overview"], doc_details["contactInfo"])
+            doc_data = (doc_details["name"], doc_details["doctorLocation"], doc_details["summary"], json.dumps(doc_details["contactInfo"]))
             #are you sure you have all data in the correct format?
 
-            cursor.execute(f"INSERT INTO {self.table_name}(name,stateID,overview,contactInfo) VALUES (?, ?, ?, ?);", doc_data)
+            cursor.execute(f"INSERT INTO {self.table_name}(name,location,summary,contactInfo) VALUES (?, ?, ?, ?);", doc_data)
             db_connection.commit()
             return {"result": "success",
                     "message": self.get_doctor(name = doc_details["name"])["message"]
