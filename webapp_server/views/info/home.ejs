@@ -11,9 +11,18 @@
             return ( value - r1[ 0 ] ) * ( r2[ 1 ] - r2[ 0 ] ) / ( r1[ 1 ] - r1[ 0 ] ) + r2[ 0 ];
         }
 
-        let stateList = <%=states%>;
-            dictionary => Object.values(dictionary).reduce((a, b) => a + b, 0);
-        
+        let stateList = <%- JSON.stringify(states)%>;
+        console.log(stateList)
+        stateList.forEach(state => {
+            console.log(state)
+            let score = dict => Object.values(dict).reduce((a, b) => parseInt(a) + parseInt(b), 0) 
+            console.log("hsl(" + convertRange(score(state.overview), [0,18], [0,120]) +", 77%, 44%)")
+            document.getElementsByClassName(state["name"].replace(/\s+/g, ''))[0].style.fill = "hsl(" + convertRange(score(state.overview), [0,18], [0,120]) +", 77%, 44%)"
+        });
+
+        //
+        //
     </script>
 </body>
+<%- include ('../partials/footer') -%>
 </html>

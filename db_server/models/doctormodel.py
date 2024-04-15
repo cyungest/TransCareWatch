@@ -30,7 +30,8 @@ class Doctor:
                     name TEXT UNIQUE NOT NULL,
                     location INT,
                     summary TEXT,
-                    contactInfo TEXT
+                    contactInfo TEXT,
+                    link TEXT
                 );
                 """
         
@@ -123,10 +124,10 @@ class Doctor:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            doc_data = (doc_details["name"], doc_details["doctorLocation"], doc_details["summary"], json.dumps(doc_details["contactInfo"]))
+            doc_data = (doc_details["name"], doc_details["doctorLocation"], doc_details["summary"], json.dumps(doc_details["contactInfo"]), doc_details["link"])
             #are you sure you have all data in the correct format?
 
-            cursor.execute(f"INSERT INTO {self.table_name}(name,location,summary,contactInfo) VALUES (?, ?, ?, ?);", doc_data)
+            cursor.execute(f"INSERT INTO {self.table_name}(name,location,summary,contactInfo, link) VALUES (?, ?, ?, ?, ?);", doc_data)
             db_connection.commit()
             return {"result": "success",
                     "message": self.get_doctor(name = doc_details["name"])["message"]

@@ -20,7 +20,7 @@ def get_states():
 
     print(f"request.url={request.url}")
     if request.method == "GET":
-        return states.get_states()
+        return states.get_states()["message"]
     elif request.method == "POST":
             content_type = request.headers.get('Content-Type')
             if content_type == 'application/json':

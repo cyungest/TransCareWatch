@@ -26,10 +26,16 @@ app.get('/', async function(request, response) {
 
   //-------------------Testing purposes: Verifying users actually exist in DB------------//
   //-----------------------------------//
+  let url = 'http://127.0.0.1:5000/states';
+  let res = await fetch(url);
+  let details = JSON.parse(await res.text());  
 
+  
+  console.log(details)
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/home",{
+    states: details
   });
 });
 
@@ -114,9 +120,6 @@ app.get('/login', async function(request, response) {
 
     //Verify user password matches
     if (details["password"] && details["password"]==password){
-      let posted_user = await res.text();
-      details = JSON.parse(posted_user);
-      console.log("Returned user:", details)
       url = 'http://127.0.0.1:5000/users/doctors/'+username;
       res = await fetch(url);
       details = JSON.parse(await res.text());

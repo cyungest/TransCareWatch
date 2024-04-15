@@ -8,8 +8,60 @@
         <main class="form-signin">
             <form action = "/states" method = "POST">
                 <div class="form-floating">
-                  <input type="username" class="form-control" id="statename_input" name="statename" value="" placeholder="statename">
-                  <label for="floatingInput">Name</label>
+                    <input class="form-control" list="states" name = "statename" id="statename_inpit" placeholder="statename">
+                    <label for="floatingInput">Location</label>
+                    <datalist id="states">
+                        <option value="Alabama">
+                        <option value="Alaska">
+                        <option value="Arizona">
+                        <option value="Arkansas">
+                        <option value="California">
+                        <option value="Colorado">
+                        <option value="Connecticut">
+                        <option value="Delaware">
+                        <option value="Florida">
+                        <option value="Georgia">
+                        <option value="Hawaii">
+                        <option value="Idaho">
+                        <option value="Illinois">
+                        <option value="Indiana">
+                        <option value="Iowa">
+                        <option value="Kansas">
+                        <option value="Kentucky">
+                        <option value="Louisiana">
+                        <option value="Maine">
+                        <option value="Maryland">
+                        <option value="Massachusetts">
+                        <option value="Michigan">
+                        <option value="Minnesota">
+                        <option value="Mississippi">
+                        <option value="Missouri">
+                        <option value="Montana">
+                        <option value="Nebraska">
+                        <option value="Nevada">
+                        <option value="New Hampshire">
+                        <option value="New Jersey">
+                        <option value="New Mexico">
+                        <option value="New York">
+                        <option value="North Carolina">
+                        <option value="North Dakota">
+                        <option value="Ohio">
+                        <option value="Oklahoma">
+                        <option value="Oregon">
+                        <option value="Pennsylvania">
+                        <option value="Rhode Island">
+                        <option value="South Carolina">
+                        <option value="South Dakota">
+                        <option value="Tennessee">
+                        <option value="Texas">
+                        <option value="Utah">
+                        <option value="Vermont">
+                        <option value="Virginia">
+                        <option value="Washington">
+                        <option value="West Virginia">
+                        <option value="Wisconsin">
+                        <option value="Wyoming">
+                    </datalist>
                 </div>
 
                 <h4>HRT for Minors</h4>
@@ -204,10 +256,15 @@
                     <input type="email" class="form-control" name="email" id="email_input" placeholder="Email">
                     <label for="floatingEmail">Email</label>
                 </div>
+                <div class="form-floating">
+                    <input type="link" class="form-control" name="link" id="link_input" placeholder="Link">
+                    <label for="floatingEmail">Link</label>
+                </div>
                 <div class="button-box col-lg-14"> 
                     <button class="btn btn-info" id="create_button_2" type="submit">Create/Update User</button>
                     <a class="btn btn-danger" id="delete_link" href="/users/delete/<%=username%>" role="button">Delete User</a>
                     <section id="feedback"><%=feedback%></section>
+                </div>
                 </div>
             </div>
         </form>

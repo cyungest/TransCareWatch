@@ -2,6 +2,17 @@
 
 </head>
 <body style="background-color: #494D5F">
-    <h1>HAI THIS IS YOUR PERSONAL PAGE</h1>
+    <h1>Hello <%=username%>! Here are your saved doctors.</h1>
+    <h1><%-doctorlist%> </h1>
+    <% for(let i=0; i<doctorlist.length; i++) {%>
+        <div class="card"> 
+            <div class="card-body text-left">
+              <h5 class="card-title"><%- doctorlist[i].name %></h5>
+              <p class="card-text"><%- doctorlist[i].summary %></p>
+              <p class="card-text">Phone: <%- doctorlist[i].contactInfo.number %> Email: <%- doctorlist[i].contactInfo.email %></p>
+              <a href='<%- doctorlist[i].link%>' class="btn btn-primary">Link to learn more</a>
+            </div>
+          </div>
+    <% } %>
 </body>
 </html>
