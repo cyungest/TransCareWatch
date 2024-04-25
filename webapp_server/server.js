@@ -358,29 +358,51 @@ app.post('/states', async function(request, response) {
         username: ""
     });
     } else {
-      url = 'http://127.0.0.1:5000/doctors/' +name;
+      let name = request.body.statename;
+      let overview = {
+        minorsHRT: request.body.minorsHRT,
+        minorsDYS: request.body.minorsDYS,
+        minorsST: request.body.minorsST,
+        adultsHRT: request.body.adultsHRT,
+        adultsDYS: request.body.adultsDYS,
+        adultsSUR: request.body.adultsSUR
+      } 
+      let url = 'http://127.0.0.1:5000/states/' +name;
       const headers = {
           "Content-Type": "application/json",
       }
-      res = await fetch(url, {
+      let res = await fetch(url, {
           method: "PUT",
           headers: headers,
-          body: JSON.stringify(request.body),
+          body: JSON.stringify({
+            name:name,
+            overview:overview
+            }),
       });
       
-      let posted_user = await res.text();
-      details = JSON.parse(posted_user);
-      console.log("Returned user:", details)
-      url = 'http://127.0.0.1:5000/users/doctors/'+username;
+      let posted_state = await res.text();
+      let details = JSON.parse(posted_state);
+      console.log("Returned state:", details)
+      url = 'http://127.0.0.1:5000/states/' +name
       res = await fetch(url);
       details = JSON.parse(await res.text());
+      console.log("Requested state per click:")
+      console.log(details.overview)
+      overview = details.overview
+      let map = ["Banned", "Restricted", "Allowed", "Protected"]
+      for(key in overview){
+        overview[key] = map[overview[key]]
+      }
+
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
-      response.render("info/specificLoc", {
+      response.render("info/macro",{
         feedback:"",
-        username: username,
-        doctorlist: details
-    });
+        location:name,
+        rank: "supportive",
+        overview: overview
+        
+      }); 
     } 
   } else {
     response.status(401); //401 Unauthorized

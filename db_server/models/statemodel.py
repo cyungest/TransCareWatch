@@ -122,9 +122,10 @@ class State:
             if self.get_state(name = state_name)["result"] == "error":
                 return {"result":"error",
                     "message":"I don't even know how you got this error. The names of the states are in the embed of the svg!"}
+            updateList['overview'] = json.dumps(updateList['overview'])
             for key in updateList:
-                cursor.exectute(f"UPDATE {self.table_name} SET {key} = {updateList[key]} WHERE name = {name}")
-            db_connection.commit()
+                cursor.execute(f"UPDATE {self.table_name} SET {key} = '{updateList[key]}' WHERE name = '{name}'")
+                db_connection.commit()
             return {"result": "success",
                     "message": self.get_state(name = state_name)["message"]
                     }

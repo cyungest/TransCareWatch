@@ -37,6 +37,7 @@ def getstatedoctors(name):
     stateID = states.get_state(name = name)["message"]["id"]
     return doctors.get_doctors_by_location(stateID=stateID)
 
+
 def interact_state(name):
     if request.method == "GET":
         print(name)
@@ -52,6 +53,7 @@ def interact_state(name):
             data = request.json
             updated_user = states.update_state(name = name, updateList=data)
             if updated_user["result"] == "error":
+                print(updated_user["message"])
                 return {}
             return updated_user["message"]
         else:
