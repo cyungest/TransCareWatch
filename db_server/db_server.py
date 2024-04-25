@@ -13,8 +13,9 @@ app = Flask(__name__, static_url_path='', static_folder='static')
 CORS(app)
 
 app.add_url_rule('/users', view_func=UsersController.get_users, methods = ['POST', 'GET'])
-app.add_url_rule('/users/doctors/<user_name>', view_func=UsersController.get_userdoctors)
-app.add_url_rule('/users/<user_name>', view_func=UsersController.interact_user, methods = ['GET','PUT', 'DELETE'])
+app.add_url_rule('/users/doctors/<email>', view_func=UsersController.get_userdoctors)
+app.add_url_rule('/users/<email>', view_func=UsersController.interact_user, methods = ['GET','PUT', 'DELETE'])
+app.add_url_rule('/users/exists/<email>', view_func=UsersController.userExists)
 
 app.add_url_rule('/states', view_func=StatesController.get_states, methods = ['POST', 'GET'])
 app.add_url_rule('/states/doctors/<name>', view_func=StatesController.getstatedoctors)

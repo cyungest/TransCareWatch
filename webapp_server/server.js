@@ -1,8 +1,13 @@
 //..............Include Express..................................//
 const express = require('express');
+router = express.Router();
 const fs = require('fs');
 const ejs = require('ejs');
 const fetch = require('node-fetch');
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const KEYS = require('./config/keys.json');
 
 //..............Create an Express server object..................//
 const app = express();
@@ -20,6 +25,73 @@ app.set('view engine', 'ejs'); //specify templating library
 
 //.............Define server routes..............................//
 //Express checks routes in the order in which they are defined
+
+app.use(session({
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 600000 //600 seconds of login time before being logged out
+  },
+  secret: KEYS["session-secret"]
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new GoogleStrategy({
+    clientID: KEYS["google-client-id"],
+    clientSecret: KEYS["google-client-secret"],
+    callbackURL: "http://localhost:3000/auth/google/callback"
+    //todo: port==process.env.PORT? :
+  },
+  function(accessToken, refreshToken, profile, done) {
+    userProfile = profile; //so we can see & use details form the profile
+    return done(null, userProfile);
+  }
+));
+
+passport.serializeUser(function(user, cb) {
+  cb(null, user);
+});
+passport.deserializeUser(function(obj, cb) {
+  cb(null, obj);
+});
+
+/*
+  This triggers the communication with Google
+*/
+app.get('/auth/google',
+  passport.authenticate('google', {
+    scope: ['email', 'openid']
+  }));
+
+/*
+  This callback is invoked after Google decides on the login results
+*/
+app.get('/auth/google/callback',
+  passport.authenticate('google', {
+    failureRedirect: '/error?code=401'
+  }),
+  async function(request, response) {
+    console.log(userProfile);
+    let playerEmail = request.user._json.email;
+    let url = 'http://127.0.0.1:5000/users/exists/' + playerEmail;
+    let res = await fetch(url);
+    let details = JSON.parse(await res.text());
+
+    if(details){
+      response.redirect('/login');
+    }
+  });
+
+app.get("/auth/logout", (request, response) => {
+  request.logout();
+  response.redirect('/');
+});
+
+module.exports = router;
+
+//Ok, User doesn't need a username. you can go just off email and id. 
+
 
 app.get('/', async function(request, response) {
   console.log(request.method, request.url) //event logging
@@ -106,52 +178,35 @@ app.get('/macro', async function(request, response) {
 
 app.get('/login', async function(request, response) {
   console.log(request.method, request.url) //event logging
+  let email = request.user._json.email;
 
   //Get user login info from query string portion of url
-  let username = request.query.username;
-  let password = request.query.password;
-  if(username && password){
+  if(email){
     //get alleged user 
-    let url = 'http://127.0.0.1:5000/users/'+username;
+    let url = 'http://127.0.0.1:5000/users/'+email;
     let res = await fetch(url);
     let details = JSON.parse(await res.text());
-    console.log("Requested user per username:")
+    console.log("Requested user per email:")
     console.log(details)
 
     //Verify user password matches
-    if (details["password"] && details["password"]==password){
-      url = 'http://127.0.0.1:5000/users/doctors/'+username;
+      url = 'http://127.0.0.1:5000/users/doctors/'+email;
       res = await fetch(url);
       details = JSON.parse(await res.text());
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
       response.render("info/specificLoc", {
         feedback:"",
-        username: username,
+        email: email,
         doctorlist: details
-    });
-    }else if (details["password"] && details["password"]!=password){
-      response.status(401); //401 Unauthorized
-      response.setHeader('Content-Type', 'text/html')
-      response.render("info/login", {
-        feedback:"Incorrect password. Please try again"
-      });
-    }else{
+    })}else{
       response.status(404); //404 Unauthorized
       response.setHeader('Content-Type', 'text/html')
       response.render("info/login", {
         feedback:"Requested user does not exist"
       });
     }
-  }else{
-    response.status(401); //401 Unauthorized
-    response.setHeader('Content-Type', 'text/html')
-    response.render("info/login", {
-      feedback:"Please provide both a username and password"
-    });
-  }
-  
-});//GET /login
+  });//GET /login
 
 app.post('/users', async function(request, response) {
   console.log(request.method, request.url) //event logging

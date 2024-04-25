@@ -31,8 +31,8 @@ def get_users():
         else:
             return {}
 
-def get_userdoctors(user_name):
-    user = users.get_user(username = user_name)
+def get_userdoctors(email):
+    user = users.get_user(email = email)
     if user["result"] == "error":
         return []
     doctorIDs = user["message"]["savedDoctorIDs"]
@@ -41,15 +41,18 @@ def get_userdoctors(user_name):
 
     doctorList = []
     for id in doctorIDs:
-        doctorList.append(doctors.getdoctor(id = id))
+        doctorList.append(doctors.get_doctor(id = id))
     
     
     return doctorList
 
-def interact_user(user_name):
+def userExists(email):
+    return users.exists(email = email)
+
+def interact_user(email):
     if request.method == "GET":
-        print(user_name)
-        user = users.get_user(username=user_name)
+        print(email)
+        user = users.get_user(email=email)
         if user["result"] == "error":
             return {}
         return user["message"]
@@ -58,7 +61,7 @@ def interact_user(user_name):
         if content_type == 'application/json':
            # or request.is_json:
             data = request.json
-            user_id = users.get_user(username=data["username"])["message"]["id"]
+            user_id = users.get_user(email=data["email"])["message"]["id"]
             updated_user = users.update_user(id = user_id, updateList = data)
             if updated_user["result"] == "error":
                 return {}
@@ -66,7 +69,7 @@ def interact_user(user_name):
         else:
             return {}
     elif request.method == "DELETE":
-        return_message = users.remove_user(username=user_name)
+        return_message = users.remove_user(email=email)
         if return_message["result"] == "success":
             return return_message["message"]
         else:
