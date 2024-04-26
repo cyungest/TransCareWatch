@@ -45,7 +45,8 @@ def interact_doctor(name):
         if content_type == 'application/json':
            # or request.is_json:
             data = request.json
-            updated_doctor = users.update_user(name = name, updateList = data)
+            updated_doctor = doctors.update_doctor(name = name, updateList = data)
+            print(updated_doctor["message"])
             if updated_doctor["result"] == "error":
                 return {}
             return updated_doctor["message"]

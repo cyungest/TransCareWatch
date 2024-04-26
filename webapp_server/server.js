@@ -423,9 +423,10 @@ app.post('/doctors', async function(request, response) {
   let summary = request.body.summary;
   let number = request.body.number
   let email = request.body.email
+  let link = request.body.link
 
   // HEADs UP: You really need to validate this information!
-  console.log("Info recieved:", name, doctorLocation, summary, number, email)
+  console.log("Info recieved:", name, doctorLocation, summary, number, email, link)
 
   if (name.length > 0 & doctorLocation.length > 0 & number.length > 0 & email.length > 0){
     let url = 'http://127.0.0.1:5000/doctors/'+name;
@@ -449,7 +450,9 @@ app.post('/doctors', async function(request, response) {
             contactInfo : {
               number: number,
               email: email
-            }
+            },
+            link: link
+
           }),
       });
     
@@ -471,21 +474,26 @@ app.post('/doctors', async function(request, response) {
       res = await fetch(url, {
           method: "PUT",
           headers: headers,
-          body: JSON.stringify(request.body),
+          body: JSON.stringify({
+            name:name,
+            location: doctorLocation,
+            summary: summary,
+            contactInfo : {
+              number: number,
+              email: email
+            },
+            link: link
+          }),
       });
       
       let posted_user = await res.text();
       details = JSON.parse(posted_user);
       console.log("Returned user:", details)
-      url = 'http://127.0.0.1:5000/users/doctors/'+username;
-      res = await fetch(url);
-      details = JSON.parse(await res.text());
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
       response.render("info/admin", {
-        feedback:"",
-        username: username,
-        doctorlist: details
+        feedback:"Doctor Updated",
+        username: "",
     });
     } 
   } else {

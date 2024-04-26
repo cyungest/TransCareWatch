@@ -180,16 +180,21 @@ class Doctor:
             cursor = db_connection.cursor()
 
             doctorID = self.get_doctor(name = name)["message"]["id"]
+            updateList['contactInfo'] = json.dumps(updateList['contactInfo'])
             
-            if not self.exists(id)["message"]:
+            if not self.exists(name = name)["message"]:
                 return {"result":"error",
                     "message":"User doesn't exist"}
             
+            print(updateList)
+            
             for key in updateList:
-                cursor.exectute(f"UPDATE {self.table_name} SET {key} = {updateList[key]} WHERE id = {doctorID}")
-            db_connection.commit()
+                print(key, updateList[key])
+                cursor.execute(f"UPDATE {self.table_name} SET {key} = '{updateList[key]}' WHERE id = {doctorID}")
+                db_connection.commit()
+
             return {"result": "success",
-                    "message": self.get_doctor(id = id)
+                    "message": self.get_doctor(id = doctorID)["message"]
                     }
         
         except sqlite3.Error as error:
