@@ -1,4 +1,4 @@
-<%- include('../partials/header', {title:"Yahtzee: User Details", username:username}) -%>
+<%- include('../partials/header', {title:"Yahtzee: User Details", email:email}) -%>
 
 </head>
 <body class="text-center">
@@ -6,19 +6,15 @@
     <div class="col-md-6">
         <main class="form-signin">
             <form action = "/users" method = "POST">
-              <%if (username){%>
+              <%if (email){%>
                 <h1 class="h3 mb-3 fw-normal">Welcome to TransCareWatch!</h1>
                 <div class="form-floating">
                   <input type="email" class="form-control" id="email_input" name="email" value="<%=email%>" placeholder="Email">
                   <label for="floatingEmail">Email</label>
                 </div>
-                <div class="form-floating">
-                  <input type="password" class="form-control" id="password_input" name="password" value="<%=password%>" placeholder="Password">
-                  <label for="floatingPassword">Password</label>
-                </div>
                 <div class="button-box col-lg-14"> 
                   <button class="btn btn-info" id="create_button" type="submit">Create/Update User</button>
-                  <a class="btn btn-danger" id="delete_link" href="/users/delete/<%=username%>" role="button">Delete User</a>
+                  <a class="btn btn-danger" id="delete_link" href="/users/delete/<%-email%>" role="button">Delete User</a>
                 </div>
               <% }else{ %>
                <a class="btn btn-primary" href="/auth/google" role="button">Create an Account with Google</a>

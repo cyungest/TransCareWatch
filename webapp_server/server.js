@@ -150,6 +150,18 @@ app.get('/users', async function(request, response) {
   });
 });
 
+app.get('/users/:email', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+  let email = request.params.email;
+
+  response.status(200);
+  response.setHeader('Content-Type', 'text/html')
+  response.render("info/user_details",{
+    feedback:"",
+    email: email,
+  });
+});
+
 app.get('/macro', async function(request, response) {
   console.log(request.method, request.url) //event logging
   let location = request.query.state
@@ -207,6 +219,33 @@ app.get('/login', async function(request, response) {
       });
     }
   });//GET /login
+
+  app.get('/users/delete/:email', async function(request, response) {
+    console.log(request.method, request.url) //event logging
+  
+    let email = request.params.email;
+    console.log("Info recieved for Deletion:", email)
+  
+    let url = 'http://127.0.0.1:5000/users/'+email;
+    let res = await fetch(url);
+    let details = JSON.parse(await res.text());
+    console.log("Requested user per username:")
+    console.log(details)
+      res = await fetch(url, {
+          method: "DELETE"
+      });
+    
+      let deleted_user = await res.text();
+      details = JSON.parse(deleted_user);
+      console.log("Returned user:", details)
+      
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html')
+      response.render("info/login",{
+        feedback:"",
+        email:""
+      });
+    })
 
 app.post('/users', async function(request, response) {
   console.log(request.method, request.url) //event logging

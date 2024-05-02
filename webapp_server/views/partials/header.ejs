@@ -9,4 +9,9 @@
 </head>
 
 <body style="background-color: #E5EAF5;">
-  <%- include('navbar') -%>
+
+  <%if (email){%>
+    <%- include('navbar', {email:email}) -%>
+    <% }else{ %>
+      <%- include('navbar') -%>
+    <% } %>

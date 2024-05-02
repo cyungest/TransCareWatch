@@ -53,6 +53,7 @@ def interact_user(email):
     if request.method == "GET":
         print(email)
         user = users.get_user(email=email)
+        print(user["message"])
         if user["result"] == "error":
             return {}
         return user["message"]
