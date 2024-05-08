@@ -7,10 +7,9 @@ def to_dict(user_tuple):
         dictionary = {}
 
         dictionary["id"] = user_tuple[0]
-        dictionary["password"] = user_tuple[1]
-        dictionary["email"] = user_tuple[2]
-        dictionary["location"] = user_tuple[3]
-        dictionary["savedDoctorIDs"] = user_tuple[4]
+        dictionary["email"] = user_tuple[1]
+        dictionary["location"] = user_tuple[2]
+        dictionary["savedDoctorIDs"] = user_tuple[3]
         
         return dictionary
 
@@ -26,7 +25,6 @@ class User:
         schema=f"""
                 CREATE TABLE {self.table_name} (
                     id INTEGER PRIMARY KEY,
-                    password TEXT NOT NULL,
                     email TEXT UNIQUE NOT NULL,
                     location TEXT,
                     savedDoctorIDs TEXT
@@ -98,29 +96,23 @@ class User:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
+            print(user_details)
+
             if not "@" in user_details["email"]:
                 return {"result":"error","message":"EMAIL DORNT HAVE A @"}
             elif not "." in user_details["email"].split("@")[1]:
                 return {"result":"error","message":"IMPROBER EMAIL FORMOT"}
             
 
-            if len(user_details["password"]) < 8:
-                return {"result":"error","message":"Password not long enough"}
-            elif not re.search("[a-z]", user_details["password"]):
-                return {"result":"error","message":"Password doesn't have a lower case letter."}
-            elif not re.search("[A-Z]", user_details["password"]):
-                return {"result":"error","message":"Password doesn't have a upper case letter."}
-            elif not re.search("[0-9]", user_details["password"]):
-                return {"result":"error","message":"Password doesn't have a number."}
-
-            user_data = (user_details["password"], user_details["email"], user_details["location"])
+            user_data = (user_details["email"])
             #are you sure you have all data in the correct format?
+            print(user_data)
 
 
-            cursor.execute(f"INSERT INTO {self.table_name}(password,email,location,savedDoctorIDs) VALUES (?, ?, ?, '');", user_data)
+            cursor.execute(f"INSERT INTO {self.table_name}(email,location,savedDoctorIDs) VALUES ('{user_data}', '', '');")
             db_connection.commit()
             return {"result": "success",
-                    "message": self.get_user(username = user_details["username"])["message"]
+                    "message": self.get_user(email = user_details["email"])["message"]
                     }
         
         except sqlite3.Error as error:

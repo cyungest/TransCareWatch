@@ -72,7 +72,9 @@ class State:
                 query = f"SELECT * from {self.table_name} WHERE {self.table_name}.name = '{name}';"
                 results = cursor.execute(query)
                 results = results.fetchone()
+                
                 cursor.execute(f"UPDATE {self.table_name} SET visits = visits + 1 WHERE name = '{name}';")
+                db_connection.commit()
                 print(results)
                 if results:
                     return {"result": "success",

@@ -72,15 +72,41 @@ app.get('/auth/google/callback',
     failureRedirect: '/error?code=401'
   }),
   async function(request, response) {
-    console.log(userProfile);
     let playerEmail = request.user._json.email;
+    console.log(playerEmail);
     let url = 'http://127.0.0.1:5000/users/exists/' + playerEmail;
     let res = await fetch(url);
-    let details = JSON.parse(await res.text());
+    let details = JSON.parse(await res.text())["message"];
+
+    console.log(details)
 
     if(details){
       response.redirect('/login');
-    }
+    } else {
+          url = 'http://127.0.0.1:5000/users'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+          res = await fetch(url, {
+              method: "POST",
+              headers: headers,
+              body: JSON.stringify({email: playerEmail}),
+          });
+        
+          let posted_user = await res.text();
+          details = JSON.parse(posted_user);
+          console.log("Returned user:", details)
+          url = 'http://127.0.0.1:5000/users/doctors/'+email;
+          res = await fetch(url);
+          details = JSON.parse(await res.text());
+          response.status(200);
+          response.setHeader('Content-Type', 'text/html')
+          response.render("info/specificLoc", {
+            feedback:"",
+            username: username,
+            doctorlist: details
+        });
+        } 
   });
 
 app.get("/auth/logout", (request, response) => {
@@ -116,7 +142,7 @@ app.get('/admin', async function(request, response) {
 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
-  response.render("info/admin",{
+  response.render("info/adminInput",{
     feedback:"",
     username:""
   });
@@ -247,105 +273,105 @@ app.get('/login', async function(request, response) {
       });
     })
 
-app.post('/users', async function(request, response) {
-  console.log(request.method, request.url) //event logging
-
-  //Get user information from body of POST request
-  let username = request.body.username;
-  let email = request.body.email;
-  let password = request.body.password;
-  // HEADs UP: You really need to validate this information!
-  console.log("Info recieved:", username, email, password)
-
-  if (username.length > 0 & email.length > 0 & password.length > 0){
-    let url = 'http://127.0.0.1:5000/users/'+username;
-    let res = await fetch(url);
-    let details = JSON.parse(await res.text());
-    console.log("Requested user per username:")
-    console.log(details)
-
-    url = "http://127.0.0.1:5000/users"
-    res = await fetch(url);
-    user_list = JSON.parse(await res.text());
-    if(user_list.some(user => user.username == username)) {
-      response.status(401); //401 Unauthorized
-      response.setHeader('Content-Type', 'text/html')
-      response.render("info/user_details", {
-      feedback:"Duplicate Username. Please try a different name.",
-      username:""
-
-    });
-    } else if (user_list.some(user => user.email == email)){
-      response.status(401); //401 Unauthorized
-      response.setHeader('Content-Type', 'text/html')
-      response.render("info/user_details", {
-      feedback:"Duplicate Email. Please try a different email.",
-      username:""
-
-    })
-    } else if (JSON.stringify(details) === '{}'){
-      url = 'http://127.0.0.1:5000/users'
-      const headers = {
-          "Content-Type": "application/json",
-      }
-      res = await fetch(url, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify(request.body),
-      });
+    app.post('/users', async function(request, response) {
+      console.log(request.method, request.url) //event logging
     
-      let posted_user = await res.text();
-      details = JSON.parse(posted_user);
-      console.log("Returned user:", details)
-      url = 'http://127.0.0.1:5000/users/doctors/'+username;
-      res = await fetch(url);
-      details = JSON.parse(await res.text());
-      response.status(200);
-      response.setHeader('Content-Type', 'text/html')
-      response.render("info/specificLoc", {
-        feedback:"",
-        username: username,
-        doctorlist: details
-    });
-    } else {
-      url = 'http://127.0.0.1:5000/users/' +username;
-      const headers = {
-          "Content-Type": "application/json",
+      //Get user information from body of POST request
+      let username = request.body.username;
+      let email = request.body.email;
+      let password = request.body.password;
+      // HEADs UP: You really need to validate this information!
+      console.log("Info recieved:", username, email, password)
+    
+      if (username.length > 0 & email.length > 0 & password.length > 0){
+        let url = 'http://127.0.0.1:5000/users/'+username;
+        let res = await fetch(url);
+        let details = JSON.parse(await res.text());
+        console.log("Requested user per username:")
+        console.log(details)
+    
+        url = "http://127.0.0.1:5000/users"
+        res = await fetch(url);
+        user_list = JSON.parse(await res.text());
+        if(user_list.some(user => user.username == username)) {
+          response.status(401); //401 Unauthorized
+          response.setHeader('Content-Type', 'text/html')
+          response.render("info/user_details", {
+          feedback:"Duplicate Username. Please try a different name.",
+          username:""
+    
+        });
+        } else if (user_list.some(user => user.email == email)){
+          response.status(401); //401 Unauthorized
+          response.setHeader('Content-Type', 'text/html')
+          response.render("info/user_details", {
+          feedback:"Duplicate Email. Please try a different email.",
+          username:""
+    
+        })
+        } else if (JSON.stringify(details) === '{}'){
+          url = 'http://127.0.0.1:5000/users'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+          res = await fetch(url, {
+              method: "POST",
+              headers: headers,
+              body: JSON.stringify(request.body),
+          });
+        
+          let posted_user = await res.text();
+          details = JSON.parse(posted_user);
+          console.log("Returned user:", details)
+          url = 'http://127.0.0.1:5000/users/doctors/'+username;
+          res = await fetch(url);
+          details = JSON.parse(await res.text());
+          response.status(200);
+          response.setHeader('Content-Type', 'text/html')
+          response.render("info/specificLoc", {
+            feedback:"",
+            username: username,
+            doctorlist: details
+        });
+        } else {
+          url = 'http://127.0.0.1:5000/users/' +username;
+          const headers = {
+              "Content-Type": "application/json",
+          }
+          res = await fetch(url, {
+              method: "PUT",
+              headers: headers,
+              body: JSON.stringify(request.body),
+          });
+          
+          let posted_user = await res.text();
+          details = JSON.parse(posted_user);
+          console.log("Returned user:", details)
+          url = 'http://127.0.0.1:5000/users/doctors/'+username;
+          res = await fetch(url);
+          details = JSON.parse(await res.text());
+          response.status(200);
+          response.setHeader('Content-Type', 'text/html')
+          response.render("info/specificLoc", {
+            feedback:"",
+            username: username,
+            doctorlist: details
+        });
+        } 
+      } else {
+        response.status(401); //401 Unauthorized
+        response.setHeader('Content-Type', 'text/html')
+        response.render("info/user_details", {
+        feedback:"Missing Info. Please make sure each field is filled.",
+        username:""
+        });
       }
-      res = await fetch(url, {
-          method: "PUT",
-          headers: headers,
-          body: JSON.stringify(request.body),
-      });
+    
       
-      let posted_user = await res.text();
-      details = JSON.parse(posted_user);
-      console.log("Returned user:", details)
-      url = 'http://127.0.0.1:5000/users/doctors/'+username;
-      res = await fetch(url);
-      details = JSON.parse(await res.text());
-      response.status(200);
-      response.setHeader('Content-Type', 'text/html')
-      response.render("info/specificLoc", {
-        feedback:"",
-        username: username,
-        doctorlist: details
-    });
-    } 
-  } else {
-    response.status(401); //401 Unauthorized
-    response.setHeader('Content-Type', 'text/html')
-    response.render("info/user_details", {
-    feedback:"Missing Info. Please make sure each field is filled.",
-    username:""
-    });
-  }
-
-  
-
- 
-}); //POST /user
-
+    
+     
+    }); //POST /user
+    
 
 app.post('/states', async function(request, response) {
   console.log(request.method, request.url) //event logging
@@ -392,7 +418,7 @@ app.post('/states', async function(request, response) {
       console.log("Returned State:", details)
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
-      response.render("info/admin", {
+      response.render("info/adminInput", {
         feedback:"State Added",
         username: ""
     });
@@ -446,7 +472,7 @@ app.post('/states', async function(request, response) {
   } else {
     response.status(401); //401 Unauthorized
     response.setHeader('Content-Type', 'text/html')
-    response.render("info/admin", {
+    response.render("info/adminInput", {
     feedback:"Missing Info. Please make sure each field is filled.",
     username:""
     });
@@ -501,7 +527,7 @@ app.post('/doctors', async function(request, response) {
       console.log("Returned user:", details)
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
-      response.render("info/admin", {
+      response.render("info/adminInput", {
         feedback:"Doctor Added",
         username: ""
     });
