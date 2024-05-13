@@ -126,19 +126,47 @@ app.get('/', async function(request, response) {
   //-----------------------------------//
   let url = 'http://127.0.0.1:5000/states';
   let res = await fetch(url);
-  let details = JSON.parse(await res.text());  
+  let states = JSON.parse(await res.text());  
 
-  
-  console.log(details)
+  url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+  });
+
+  await res.text()
+        
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/home",{
-    states: details
+    states: states
   });
 });
 
 app.get('/admin', async function(request, response) {
   console.log(request.method, request.url)
+
+  let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+  });
+
+  await res.text() 
 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
@@ -158,6 +186,21 @@ app.get('/loginpage', async function(request, response) {
   //-------------------Testing purposes: Verifying users actually exist in DB------------//
   //-----------------------------------//
 
+  let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+  });
+
+  await res.text() 
+
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/login",{
@@ -168,6 +211,20 @@ app.get('/loginpage', async function(request, response) {
 app.get('/users', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
+  let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+  });
+
+await res.text() 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/user_details",{
@@ -180,6 +237,20 @@ app.get('/users/:email', async function(request, response) {
   console.log(request.method, request.url) //event logging
   let email = request.params.email;
 
+  let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: email
+      }),
+  });
+
+  await res.text() 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/user_details",{
@@ -191,10 +262,23 @@ app.get('/users/:email', async function(request, response) {
 app.get('/macro', async function(request, response) {
   console.log(request.method, request.url) //event logging
   let location = request.query.state
+  let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+  });
 
-  let url = 'http://127.0.0.1:5000/states/'+location;
-  let res = await fetch(url);
-  let details = JSON.parse(await res.text());
+  await res.text() 
+  url = 'http://127.0.0.1:5000/states/'+location;
+  res = await fetch(url);
+  details = JSON.parse(await res.text());
   console.log("Requested state per click:")
   console.log(details.overview)
   let overview = details.overview
@@ -216,20 +300,52 @@ app.get('/macro', async function(request, response) {
 
 app.get('/analytics', async function(request, response) {
   console.log(request.method, request.url) //event logging
-  let url = 'http://127.0.0.1:5000/states';
-  let res = await fetch(url);
-  let details = JSON.parse(await res.text());  
+  let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+  });
+
+  await res.text() 
+  url = 'http://127.0.0.1:5000/states';
+  res = await fetch(url);
+  let states = JSON.parse(await res.text());  
+  url = 'http://127.0.0.1:5000/stats';
+  res = await fetch(url);
+  let stats = JSON.parse(await res.text());  
 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("info/analytics",{
-    states: details
+    states: states,
+    visits: stats
   });
   
 })
 
 app.get('/login', async function(request, response) {
   console.log(request.method, request.url) //event logging
+  let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+  });
+
+  await res.text()   
   let email = request.user._json.email;
 
   //Get user login info from query string portion of url
@@ -262,13 +378,26 @@ app.get('/login', async function(request, response) {
 
   app.get('/users/delete/:email', async function(request, response) {
     console.log(request.method, request.url) //event logging
-  
+    let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+    let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+    });
+
+    await res.text()   
     let email = request.params.email;
     console.log("Info recieved for Deletion:", email)
   
-    let url = 'http://127.0.0.1:5000/users/'+email;
-    let res = await fetch(url);
-    let details = JSON.parse(await res.text());
+    url = 'http://127.0.0.1:5000/users/'+email;
+    res = await fetch(url);
+    details = JSON.parse(await res.text());
     console.log("Requested user per username:")
     console.log(details)
       res = await fetch(url, {
@@ -289,7 +418,21 @@ app.get('/login', async function(request, response) {
 
     app.post('/users', async function(request, response) {
       console.log(request.method, request.url) //event logging
-    
+
+      let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+      let res = await fetch(url, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            route: request.url,
+            email: ""
+          }),
+      });
+
+      await res.text()     
       //Get user information from body of POST request
       let username = request.body.username;
       let email = request.body.email;
@@ -390,6 +533,20 @@ app.get('/login', async function(request, response) {
 app.post('/states', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
+  let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+  });
+
+  await res.text() 
   //Get user information from body of POST request
   let name = request.body.statename;
   let overview = {
@@ -496,6 +653,20 @@ app.post('/states', async function(request, response) {
 app.post('/doctors', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
+  let url = 'http://127.0.0.1:5000/stats'
+          const headers = {
+              "Content-Type": "application/json",
+          }
+  let res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        route: request.url,
+        email: ""
+      }),
+  });
+
+  await res.text() 
   //Get user information from body of POST request
   let name = request.body.name;
   let doctorLocation = request.body.doctorLocation;

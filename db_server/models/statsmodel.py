@@ -9,15 +9,15 @@ def to_dict(input):
 
     dict["id"] = input[0]
     dict["route"] = input[1]
-    dict["userID"] = input[2]
+    dict["email"] = input[2]
 
     return dict
 
 
-class Stats:
+class Stat:
     def __init__(self, db_name):
         self.db_name =  db_name
-        self.table_name = "states"
+        self.table_name = "stats"
 
     
     def initialize_stats_table(self):
@@ -26,8 +26,8 @@ class Stats:
         schema=f"""
                 CREATE TABLE {self.table_name} (
                     id INTEGER PRIMARY KEY,
-                    route TEXT UNIQUE NOT NULL,
-                    userID TEXT,
+                    route TEXT,
+                    email TEXT
                 );
                 """
         
@@ -65,7 +65,7 @@ class Stats:
             cursor = db_connection.cursor()
 
             if id:
-                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.name = {id};"
+                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.id = {id};"
                 results = cursor.execute(query)
                 results = results.fetchone()
                 if results:
@@ -89,10 +89,10 @@ class Stats:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            data = (details["route"], details["userID"])
+            data = (details["route"], details["email"])
             #are you sure you have all data in the correct format?
 
-            cursor.execute(f"INSERT INTO {self.table_name}(name,userID) VALUES (?, ?);", data)
+            cursor.execute(f"INSERT INTO {self.table_name}(route, email) VALUES (?, ?);", data)
             db_connection.commit()
             return {"result": "success",
                     "message": "created"
