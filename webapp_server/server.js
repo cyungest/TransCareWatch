@@ -214,6 +214,20 @@ app.get('/macro', async function(request, response) {
   });
 });
 
+app.get('/analytics', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+  let url = 'http://127.0.0.1:5000/states';
+  let res = await fetch(url);
+  let details = JSON.parse(await res.text());  
+
+  response.status(200);
+  response.setHeader('Content-Type', 'text/html')
+  response.render("info/analytics",{
+    states: details
+  });
+  
+})
+
 app.get('/login', async function(request, response) {
   console.log(request.method, request.url) //event logging
   let email = request.user._json.email;
@@ -556,7 +570,7 @@ app.post('/doctors', async function(request, response) {
       console.log("Returned user:", details)
       response.status(200);
       response.setHeader('Content-Type', 'text/html')
-      response.render("info/admin", {
+      response.render("info/adminInput", {
         feedback:"Doctor Updated",
         username: "",
     });
@@ -564,7 +578,7 @@ app.post('/doctors', async function(request, response) {
   } else {
     response.status(401); //401 Unauthorized
     response.setHeader('Content-Type', 'text/html')
-    response.render("info/admin", {
+    response.render("info/adminInput", {
     feedback:"Missing Info. Please make sure each field is filled.",
     username:""
     });
