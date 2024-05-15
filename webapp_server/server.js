@@ -1,4 +1,5 @@
 //..............Include Express..................................//
+const multer = require('multer');
 const express = require('express');
 router = express.Router();
 const fs = require('fs');
@@ -22,6 +23,17 @@ app.use(express.urlencoded());
 app.use(express.static('public')); //specify location of static assests
 app.set('views', __dirname + '/views'); //specify location of templates
 app.set('view engine', 'ejs'); //specify templating library
+
+let publicStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/images')
+  },
+  filename: function (req, file, cb) {
+    console.log(file)
+    cb(null, Date.now()+'-'+file.originalname.replace(' ', '-'));
+  }
+});
+let publicUpload = multer({ storage: publicStorage });
 
 //.............Define server routes..............................//
 //Express checks routes in the order in which they are defined
@@ -172,7 +184,8 @@ app.get('/admin', async function(request, response) {
   response.setHeader('Content-Type', 'text/html')
   response.render("info/adminInput",{
     feedback:"",
-    username:""
+    username:"",
+    photoLocation: ""
   });
 
 })
@@ -529,6 +542,22 @@ app.get('/login', async function(request, response) {
      
     }); //POST /user
     
+    app.post('/upload/photo', publicUpload.single('myFile'), (req, res, next) => {
+      const file = req.file;
+      if (!file) {
+        const error = {
+        'httpStatusCode' : 400,
+        'message':'Please upload a file'
+         }
+        res.send(error);
+      }
+    
+      res.render('info/adminInput',{
+        photoLocation: "/images/"+file.filename,
+        feedback:"",
+        username:"",
+      });
+    })
 
 app.post('/states', async function(request, response) {
   console.log(request.method, request.url) //event logging
@@ -591,7 +620,8 @@ app.post('/states', async function(request, response) {
       response.setHeader('Content-Type', 'text/html')
       response.render("info/adminInput", {
         feedback:"State Added",
-        username: ""
+        username: "",
+        photoLocation: ""
     });
     } else {
       let name = request.body.statename;
@@ -645,7 +675,8 @@ app.post('/states', async function(request, response) {
     response.setHeader('Content-Type', 'text/html')
     response.render("info/adminInput", {
     feedback:"Missing Info. Please make sure each field is filled.",
-    username:""
+    username:"",
+    photoLocation: ""
     });
   }
 }); //THE PUT REQUEST DOES NOT WORK RIGHT NOW. WORK ON LATER. 
@@ -674,9 +705,10 @@ app.post('/doctors', async function(request, response) {
   let number = request.body.number
   let email = request.body.email
   let link = request.body.link
+  let photo = request.body.photo
 
   // HEADs UP: You really need to validate this information!
-  console.log("Info recieved:", name, doctorLocation, summary, number, email, link)
+  console.log("Info recieved:", name, doctorLocation, summary, number, email, link, photo)
 
   if (name.length > 0 & doctorLocation.length > 0 & number.length > 0 & email.length > 0){
     let url = 'http://127.0.0.1:5000/doctors/'+name;
@@ -701,7 +733,8 @@ app.post('/doctors', async function(request, response) {
               number: number,
               email: email
             },
-            link: link
+            link: link,
+            photo: photo
 
           }),
       });
@@ -714,7 +747,8 @@ app.post('/doctors', async function(request, response) {
       response.setHeader('Content-Type', 'text/html')
       response.render("info/adminInput", {
         feedback:"Doctor Added",
-        username: ""
+        username: "",
+        photoLocation: ""
     });
     } else {
       url = 'http://127.0.0.1:5000/doctors/' +name;
@@ -732,7 +766,8 @@ app.post('/doctors', async function(request, response) {
               number: number,
               email: email
             },
-            link: link
+            link: link,
+            photo: photo
           }),
       });
       
@@ -744,6 +779,7 @@ app.post('/doctors', async function(request, response) {
       response.render("info/adminInput", {
         feedback:"Doctor Updated",
         username: "",
+        photoLocation: ""
     });
     } 
   } else {
@@ -751,7 +787,8 @@ app.post('/doctors', async function(request, response) {
     response.setHeader('Content-Type', 'text/html')
     response.render("info/adminInput", {
     feedback:"Missing Info. Please make sure each field is filled.",
-    username:""
+    username:"",
+    photoLocation: ""
     });
   }
 }); //THE PUT REQUEST DOES NOT WORK RIGHT NOW. WORK ON LATER. 

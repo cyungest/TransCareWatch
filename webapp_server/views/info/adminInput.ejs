@@ -182,8 +182,15 @@
       </div>
       <div class="col-md-6">  
         <h2>Input Data for Doctors</h2>
+        <form action="/upload/photo" enctype="multipart/form-data" method="POST">
+            <label for="floatingEmail">Image</label>
+            <br>
+            <input type="file" name="myFile" accept="image/*" required/>
+            <input type="submit" value="Upload a file" required/>
+        </form>
         <main class="form-signin">
             <form action = "/doctors" method = "POST">
+                <input type="hidden" class="form-control" name="photo" id="photo_input" placeholder="photo" value = "<%=photoLocation%>">
                 <div class="form-floating">
                     <input type="name" class="form-control" name="name" id="name_input" placeholder="name">
                     <label for="floatingInput">Name</label>

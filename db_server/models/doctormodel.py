@@ -12,6 +12,8 @@ def to_dict(user_tuple):
         dictionary["location"] = user_tuple[2]
         dictionary["summary"] = user_tuple[3]
         dictionary["contactInfo"] = json.loads(user_tuple[4])
+        dictionary["link"] = user_tuple[5]
+        dictionary["photo"] = user_tuple[6]
         
         return dictionary
 
@@ -31,7 +33,8 @@ class Doctor:
                     location INT,
                     summary TEXT,
                     contactInfo TEXT,
-                    link TEXT
+                    link TEXT,
+                    photo TEXT
                 );
                 """
         
@@ -124,10 +127,10 @@ class Doctor:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            doc_data = (doc_details["name"], doc_details["doctorLocation"], doc_details["summary"], json.dumps(doc_details["contactInfo"]), doc_details["link"])
+            doc_data = (doc_details["name"], doc_details["doctorLocation"], doc_details["summary"], json.dumps(doc_details["contactInfo"]), doc_details["link"], doc_details["photo"])
             #are you sure you have all data in the correct format?
 
-            cursor.execute(f"INSERT INTO {self.table_name}(name,location,summary,contactInfo, link) VALUES (?, ?, ?, ?, ?);", doc_data)
+            cursor.execute(f"INSERT INTO {self.table_name}(name,location,summary,contactInfo, link, photo) VALUES (?, ?, ?, ?, ?, ?);", doc_data)
             db_connection.commit()
             return {"result": "success",
                     "message": self.get_doctor(name = doc_details["name"])["message"]
