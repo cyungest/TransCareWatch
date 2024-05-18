@@ -1,0 +1,1 @@
+To start the website, two terminals are needed. One that gets to webapp_server ("node server.js") and one that gets to db_server ("python3 db_server.py"). Once those two commands run, open http://127.0.0.1:3000. 
